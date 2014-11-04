@@ -11,3 +11,5 @@ mv *w_fakesV$i.fits* V$i
 /project/projectdirs/deepsky/rates/effs/Chris_Dev/Subs_File_Struct/./cpweight V$i
 done
 
+echo "Directory Structure and cpweight done"
+

@@ -1,0 +1,303 @@
+#!/bin/bash
+
+#Goal : Remap and Subtract a New and Reference image.
+
+BINDIR=/project/projectdirs/boss/carver/usr/local/bin
+CODEDIR=/project/projectdirs/boss/carver/ptf/code
+REFDIR=/project/projectdirs/boss/carver/ptf/refs
+SUBDIR=/project/projectdirs/boss/carver/ptf/sub
+
+num=$$
+tmpf=.tmp.${num}
+tmpb=.tmpb.${num}
+tmpm=.tmpm.${num}
+tmpc=.tmpc.${num}
+
+ref=$1
+new=$2
+
+echo 'Working on new: ' $new
+
+refp=${ref%.fits}
+newp=${new%.fits}
+
+subp=${newp}_${refp}
+
+refweight=${refp}.weight.fits
+refmask=${refp}.mask.fits
+refnoise=${refp}.noise.fits
+refcat=${refp}.cat
+
+newweight=${newp}.weight.fits
+newmask=${newp}.mask.fits
+newnoise=${newp}.noise.fits
+newcat=${newp}.cat
+newhead=${newp}.head
+ffin=${newp}.done
+
+refremap=ref.${subp}.remap.fits
+refremapweight=ref.${subp}.remap.weight.fits
+refremapmask=ref.${subp}.remap.mask.fits
+refremapnoise=ref.${subp}.remap.noise.fits
+refremaphead=ref.${subp}.remap.head
+refrmcat=ref.${subp}.remap.cat
+
+subcat=sub.${subp}.cat
+negsubcat=negsub.${subp}.cat
+sublist=sub.${subp}.list
+submask=sub.${subp}.mask.fits
+apercat=ref.${subp}.remap.ap.cat
+negapercat=negref.${subp}.remap.ap.cat
+badpix=sub.${subp}.bpix
+negbadpix=negsub.${subp}.bpix
+
+sub=sub.${subp}.fits
+negsub=negsub.${subp}.fits
+tmpnew=new.${subp}.fits
+
+if [[ -a $ffin ]]; then
+
+  echo 'Already processed ' $new 
+
+else
+
+ ln -s $new $tmpnew
+ 
+ hotlog=hot.${subp}.log
+ hotpar=hot.${subp}.par
+ 
+ echo $sub > $hotpar 
+ echo $ref >> $hotpar 
+ echo $new >> $hotpar 
+ 
+ #
+ # Make the new catalog and noise
+ #
+ 
+ zp=`${BINDIR}/gethead UB1_ZP ${new}`
+ 
+ ${BINDIR}/sex -c ${REFDIR}/scamp.sex -WEIGHT_IMAGE ${newweight} -MAG_ZEROPOINT $zp -VERBOSE_TYPE QUIET -CATALOG_NAME ${newcat} -CHECKIMAGE_TYPE BACKGROUND_RMS -CHECKIMAGE_NAME ${newnoise} ${new}
+ 
+ # Work on making an astrometric catalog from the reference.
+ 
+ ${BINDIR}/scamp -c ${SUBDIR}/scamp.conf.cat -ASTREFCAT_NAME ${refcat} ${newcat} > $hotlog 2>&1 
+ 
+ #
+ # Now merge the headers accordingly
+ #
+ 
+# - old ${BINDIR}/imhead ${new} |grep NAXIS > ${refremaphead}
+# - old cat ${newhead} >> ${refremaphead}
+# - new
+  ${BINDIR}/imhead ${new} > ${refremaphead}
+ 
+# - old if [[ -a $newhead ]]; then
+# - old 
+# - old  astrom=`${BINDIR}/gethead ASTSOL $new`
+# - old 
+# - old  if [ $astrom = 'astrnet' ]; then
+# - old 
+# - old   ${SUBDIR}/delanwcs ${new}
+# - old   ${BINDIR}/sethead ${new} @${newhead} 
+# - old   ${BINDIR}/modhead $new ASTSOL scamp >>  $hotlog 2>&1
+# - old 
+# - old  else
+# - old 
+# - old   ${SUBDIR}/delscwcs ${new}
+# - old   ${BINDIR}/sethead ${new} @${newhead}
+# - old 
+# - old  fi
+# - old 
+# - old fi
+ 
+ #
+ # Get the remapped ref
+ #
+ 
+ ${BINDIR}/swarp -c ${SUBDIR}/default.swarp ${ref} -IMAGEOUT_NAME ${refremap} -WEIGHTOUT_NAME ${refremapweight} > $hotlog 2>&1 
+ 
+ #
+ # Make the noise image
+ #
+ 
+ ${BINDIR}/sex -c ${SUBDIR}/default.sex.noise -CATALOG_NAME $tmpc -CHECKIMAGE_TYPE BACKGROUND_RMS -CHECKIMAGE_NAME ${refremapnoise} -VERBOSE_TYPE QUIET ${refremap} 
+ 
+ rm $tmpc
+ 
+ #
+ # Make the ref-remap bad pixel mask
+ #
+ 
+ echo $refremapweight > $tmpm
+ echo $refremapmask >> $tmpm
+ ${CODEDIR}/cvtmask < $tmpm
+ 
+ #
+ #Add the masks together to make the supermask
+ #
+ echo $refremapmask > $tmpb
+ echo $newmask >> $tmpb
+ echo $submask >> $tmpb
+ 
+ ${CODEDIR}/add_im < $tmpb
+ 
+ #
+ # Clean up tmp files
+ #
+  rm  $tmpb $tmpm
+ 
+ 
+ 
+ # Creating new and reference noise images
+ 
+ #Setting hotpants parameters
+ 
+ #r & rss
+ 
+ seenew=`${BINDIR}/gethead SEEING ${new}`
+ seeref=`${BINDIR}/gethead SEEING ${ref}`
+ 
+ ntst=$( echo "$seenew > $seeref" | bc )
+ 
+ if [[ $ntst -eq 1 ]]; then
+   seeing=${seenew}
+ else
+   seeing=${seeref}
+ fi
+ 
+ pixscal=1.01
+ seepix=$(echo "scale=5; ( ${seeing} * ${pixscal} )" | bc -l)
+ 
+ r=$(echo "scale=3; ( 2.5 * $seepix ) " | bc -l) 
+ rss=$(echo "scale=3; ( 6.0 * $seepix ) " | bc -l) 
+ echo 'r and rss ' $r $rss >> $hotlog 2>&1
+ 
+ #tl & il
+ 
+ newskybkg=`${BINDIR}/gethead MEDSKY ${new}`
+ refskybkg=`${BINDIR}/gethead MEDSKY ${ref}`
+ tnewskysig=`${BINDIR}/gethead SKYSIG ${new}`
+ trefskysig=`${BINDIR}/gethead SKYSIG ${ref}`
+ 
+ tu=`${BINDIR}/gethead SATURATE ${ref}`
+ #
+ # used prior to 20091009
+ #iu=25000
+ #
+ iu=50000
+ 
+ #Assume gain is 1.6
+ gain=1.6
+ newskysig=$(echo "scale=3; ( ${tnewskysig} * 1.48  / ${gain} )" | bc -l) 
+ refskysig=$(echo "scale=3; ( ${trefskysig} * 1.48 / ${gain} )" | bc -l)
+ 
+ 
+ il=$(echo "scale=3; ${newskybkg} -10.0 * ${newskysig} " | bc -l) 
+ tl=$(echo "scale=3; ${refskybkg} -10.0 * ${refskysig}" | bc -l) 
+ 
+ echo 'tl and il ' $il $tl >> $hotlog 2>&1
+ echo 'refskybkg and newskybkg ' $refskybkg $newskybkg >> $hotlog 2>&1
+ echo 'refskysig and newskysig ' $refskysig $newskysig >> $hotlog 2>&1
+ 
+ #nsx & nsy
+ naxis1=`${BINDIR}/gethead NAXIS1 ${new}`
+ naxis2=`${BINDIR}/gethead NAXIS2 ${new}`
+ 
+ nsx=$(echo "scale=1; ${naxis1} / 100" | bc -l) 
+ nsy=$(echo "scale=1; ${naxis2} / 100" | bc -l) 
+ 
+ echo 'nsx nst ' $nsx $nsy >> $hotlog 2>&1
+ 
+ echo $il >> $hotpar
+ echo $iu >> $hotpar
+ echo $tl >> $hotpar
+ echo $tu >> $hotpar
+ echo $r  >> $hotpar
+ echo $rss  >> $hotpar
+ echo $nsx  >> $hotpar
+ echo $nsy  >> $hotpar
+ 
+ 
+ #Now running hotpants
+ ${BINDIR}/hotpants -inim ${new} -hki -n i -c t -tmplim ${refremap} -outim ${sub} -tu ${tu} -iu ${iu} -tl ${tl} -il ${il} -r ${r} -rss ${rss} -tni ${refremapnoise} -ini ${newnoise} -imi ${submask} -nsx ${nsx} -nsy ${nsy} >> $hotlog 2>&1
+ 
+ #
+ # Compute the area
+ #
+ echo $sub > $tmpm 
+ echo $submask >> $tmpm
+ 
+ ${CODEDIR}/area < $tmpm 
+ 
+ rm $tmpm
+ 
+ 
+ #
+ # make the catalogs
+ #
+ 
+ 
+ refzp=`${BINDIR}/gethead UB1_ZP ${ref}`
+ frat=`${BINDIR}/gethead KSUM00 ${sub}`
+ subzp=$(echo "scale=5; 2.5*l(${frat})/l(10.0) + ${refzp} " | bc -l)
+ echo $subzp  >> $hotpar
+ 
+ ${BINDIR}/sex -c ${SUBDIR}/default.sex.ref -MAG_ZEROPOINT ${refzp} -CATALOG_NAME ${refrmcat} -VERBOSE_TYPE QUIET ${refremap} 
+ ${BINDIR}/sex -c ${SUBDIR}/default.sex.sub -MAG_ZEROPOINT ${subzp} -CATALOG_NAME ${subcat} -ASSOC_NAME ${refrmcat} -VERBOSE_TYPE QUIET ${sub} 
+ ${BINDIR}/sex -c ${SUBDIR}/default.sex.aper -MAG_ZEROPOINT ${refzp} -CATALOG_NAME ${apercat} -VERBOSE_TYPE QUIET ${sub},${refremap}
+ 
+# - old # 
+# - old # Time for the negative subtractions
+# - old #
+# - old 
+# - old cp $sub $negsub
+# - old
+# - old ${BINDIR}/setpix $negsub 0 0 -m -1.0
+# - old
+# - old #
+# - old # Now make the catalogs
+# - old #
+# - old
+# - old ${BINDIR}/sex -c ${SUBDIR}/default.sex.sub -MAG_ZEROPOINT ${subzp} -CATALOG_NAME ${negsubcat} -ASSOC_NAME ${refrmcat} -VERBOSE_TYPE QUIET ${negsub} 
+# - old ${BINDIR}/sex -c ${SUBDIR}/default.sex.aper -MAG_ZEROPOINT ${refzp} -CATALOG_NAME ${negapercat} -VERBOSE_TYPE QUIET ${negsub},${refremap}
+# - old 
+
+# - old ncand=`cat $subcat $negsubcat | grep -v ^# | wc -l`
+# - new
+ ncand=`cat $subcat | grep -v ^# | wc -l`
+ 
+ if [ $ncand -lt 1 ]; then
+ 
+  echo 'Nothing to do' >>  $hotlog 2>&1
+ 
+ else
+ 
+  echo ${sub} > $tmpf
+  echo ${submask} >> $tmpf
+  echo ${subcat} >> $tmpf
+  ${CODEDIR}/badpix < $tmpf
+ 
+# - old  echo ${negsub} > $tmpf
+# - old  echo ${submask} >> $tmpf
+# - old  echo ${negsubcat} >> $tmpf
+# - old  ${CODEDIR}/badpix < $tmpf
+ 
+  
+ #
+ # Clean up tmp files
+ #
+  rm $tmpf 
+ 
+ #
+ # Make the lists
+ #
+ 
+  ${SUBDIR}/mkfinallist.pl ${subcat} ${apercat} ${badpix} ${ref} ${new} 1 > ${sublist}
+# - old  ${SUBDIR}/mkfinallist.pl ${negsubcat} ${negapercat} ${negbadpix} ${ref} ${new} 0 >> ${sublist}
+  ${SUBDIR}/cut_sex.pl ${sub} ${sublist} ${hotpar}
+ 
+  touch $ffin
+ 
+ fi 
+
+fi

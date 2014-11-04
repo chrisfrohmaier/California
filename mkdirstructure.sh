@@ -8,5 +8,6 @@ for i in {0..10};
 do
 mkdir V$i
 mv *w_fakesV$i.fits* V$i
+/project/projectdirs/deepsky/rates/effs/Chris_Dev/Subs_File_Struct/./cpweight V$i
 done
 

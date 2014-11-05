@@ -35,3 +35,7 @@ This is the directory structure of for the subtractions. (Start /project/project
 ```
 - Hope that it works!
 - Load the database
+##Subtraction Example
+
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/Subtraction_Example.png)
+>Left: New with fakes inserted, Middle: Ref, Right: Subtraction with fakes circled

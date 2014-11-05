@@ -1,0 +1,50 @@
+#1 X_Source
+#2 Y_Source
+#3 Alpha_Source
+#4 Dec_Source
+#5 Fake_X
+#6 Fake_Y
+#7 Mag_Auto of Source
+#8 Mag_Best of Source
+#9 Flux_Auto of Source
+#10 Magnitude of Fake
+#11 Flux of Fake
+#12 Background subtracted from source
+#13 Scaling Factor for flux
+#14 PTFFIELD
+#15 CCDID
+#16 Host X
+#17 Host Y
+#18 Host Alpha
+#19 Host Dec
+#20 Host Mag_Auto
+#21 Host Mag_Best
+#22 Host Flux
+#23 Galaxy Background
+#24 CXX
+#25 CYY
+#26 CXY
+#27 Host_Elongation
+#28 Host Ellipticity
+#29 Flux_Radius 0.2
+#30 Flux_Radius 0.5
+#31 Flux_Radius 0.9
+#32 FBox1
+#33 FBox2
+#34 FBox3
+#35 FBox4
+#36 FBox5
+#37 FBox6
+#38 Gain
+#39 Readnoise
+#40 Moon Illumination Fraction
+#41 MoonRA
+#42 MoonDec
+#43 Airmass
+#44 Seeing
+#45 Mean Image Ellipticity
+#46 Median Sky
+#47 Skysignal
+#48 Zeropoint
+#49 Limiting Magnitude
+#50 MJD

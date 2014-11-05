@@ -9,3 +9,29 @@ This should include:
 	- Scripts to run the subtractions
 	- Database stuff
 	
+#How to perform the subtractions
+This is the directory structure of for the subtractions. (Start /project/projectdirs/deepsky/rates/effs/)
+
+```
+|-subs/
+|-- 2009_01/
+|--- C00
+|---- V0
+|---- V1
+|---- ...
+|---- V10
+|--- ...
+|--- C11
+```
+- Repeat this structure for 2010 and 2011
+- Copy over the fakes_V? to their appropriate folder
+- Copy the reference images to the appropriate from this directory"
+```
+/project/projectdirs/deepsky/rates/effs/refs/Rband/ptf_100019/C??
+```
+- Run the `mkweight` and `diffem` scripts from this directory:
+```
+/project/projectdirs/deepsky/rates/effs/utils/
+```
+- Hope that it works!
+- Load the database

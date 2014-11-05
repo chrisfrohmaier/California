@@ -15,4 +15,4 @@ for line in f:
 	version=secs[-1].split('.')[0].split('fakes')[1]
 	#print '{}_{}/C{}/{}'.format(year,month,chip,version)
 	#print 'cp {} subs/{}_{}/C{}/{}'.format(original,year,month,chip,version)
-	subprocess.call('cp '+original+' subs/'+year+'_'+month+'/C'+chip+'/'+version,shell=True)
+	subprocess.call('mv '+original+' subs/'+year+'_'+month+'/C'+chip+'/'+version,shell=True)

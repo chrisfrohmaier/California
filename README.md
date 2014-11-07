@@ -70,3 +70,12 @@ or
 Have a coulmn which states the distance to the nearest candidate and then we can specify later to be `<=1` when querying for efficiencies?
 
 or both!
+
+####Info on matched candidate.
+
+Is it worth having an additional column in this table that states which candidate it was matched to?
+- Does each candidate have a unique ID?
+	- If so, then just have an `ID of Match` column
+		- If not matched, have Null or equivalent
+or
+- Do we want many more columns in this table with the matched candidate info?

@@ -95,4 +95,5 @@ The magnitudes for the subtraction are calculated from the zeropoint of the refe
 The `ref` has a zeropoint
 The `new` has a zeropoint
 These zeropoints differ by a factor (given in the subtraction table/database)
-The zeropoints for the subtraction are resolved with this correction factor as follows:$$Zp_{sub}=Zp_{ref} + 2.5 log_{10}(factor)$$ 
+The zeropoints for the subtraction are resolved with this correction factor as follows:
+![Equation](https://dl.dropboxusercontent.com/u/37570643/zp_factor.png)

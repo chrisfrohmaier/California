@@ -79,3 +79,8 @@ Is it worth having an additional column in this table that states which candidat
 		- If not matched, have Null or equivalent
 or
 - Do we want many more columns in this table with the matched candidate info?
+
+#Match Analysis
+We matched the subtraction candidates and the fakes. We found that all the candidates fell within 1" of the position the fake was inserted into (when scaled by the seeing)
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Both_Separation_Histogram.jpg)
+>Left: Distribution of the candidate/fake separation. Right: The Magnitude difference between the fake and matching candidate against the fake's magnitude. Note the offset anf the scatter.

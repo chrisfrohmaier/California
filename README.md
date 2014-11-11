@@ -81,6 +81,21 @@ or
 - Do we want many more columns in this table with the matched candidate info?
 
 #Match Analysis
-We matched the subtraction candidates and the fakes. We found that all the candidates fell within 1" of the position the fake was inserted into (when scaled by the seeing)
+We matched the subtraction candidates and the fakes. We found that all the candidates fell within 1" of the position the fake was inserted at (when scaled by the seeing).
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Both_Separation_Histogram.jpg)
 >Left: Distribution of the candidate/fake separation. Right: The Magnitude difference between the fake and matching candidate against the fake's magnitude. Note the offset anf the scatter.
+
+##Problem with the Magnitude Differences
+From the right panel of the above figure it is clear there is a constant offset and a large random scatter in the magnitude difference. The expected behaviour would be for a small scatter around y=0 for the brighter object with an increasing scatter as we go to fainter magnitudes.
+
+###Possible Solution
+The magnitudes for the subtraction are calculated from the zeropoint of the reference. However, I did not know these zeropoints when i was calculating the fake magnitudes. Therefore my magnitudes need to be corrected. An extra column will be added to the database with the corrected fake magnitudes. These changes won't be huge and we will still have enough object in the magnitude bins.
+
+####Zeropoint Explanation
+The `ref` has a zeropoint
+The `new` has a zeropoint
+These zeropoints differ by a factor (given in the subtraction table/database)
+The zeropoints for the subtraction are resolved with this correction factor as follows:
+$$
+Zp_{sub}=Zp_{ref} + 2.5 log_{10}(factor)
+$$ 

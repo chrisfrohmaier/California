@@ -88,6 +88,13 @@ We matched the subtraction candidates and the fakes. We found that all the candi
 ##Problem with the Magnitude Differences
 From the right panel of the above figure it is clear there is a constant offset and a large random scatter in the magnitude difference. The expected behaviour would be for a small scatter around y=0 for the brighter object with an increasing scatter as we go to fainter magnitudes.
 
+##Further Analysis
+We only looked at the data from the same night, on the same chip but across all of the V1-V10. Unfortunately the the scatter remains. It is unclear why.
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Magdiff_Graphs/2010_05_C09.png)
+###Hostless
+we also looked at this trend for the hostless fakes. We suffered from poor statistics because only 10% of fakes are hostless. Again, there is scatter.
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Magdiff_Graphs/2011_06_C02_Hostless.png)
+
 ###Possible Solution
 The magnitudes for the subtraction are calculated from the zeropoint of the reference. However, I did not know these zeropoints when i was calculating the fake magnitudes. Therefore my magnitudes need to be corrected. An extra column will be added to the database with the corrected fake magnitudes. These changes won't be huge and we will still have enough object in the magnitude bins.
 

@@ -92,7 +92,7 @@ From the right panel of the above figure it is clear there is a constant offset 
 We only looked at the data from the same night, on the same chip but across all of the V1-V10. Unfortunately the the scatter remains. It is unclear why.
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Magdiff_Graphs/2010_05_C09.png)
 ###Hostless
-we also looked at this trend for the hostless fakes. We suffered from poor statistics because only 10% of fakes are hostless. Again, there is scatter.
+We also looked at this trend for the hostless fakes. We suffered from poor statistics because only 10% of fakes are hostless. Again, there is scatter.
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Magdiff_Graphs/2011_06_C02_Hostless.png)
 
 ###Possible Solution

@@ -43,7 +43,7 @@ def file_structure(): #This definition creates the file structure for results to
 
 def Sextract(science_image,zeropoint,seeing,saturation,gain): #Runs Sextractor and creates a catalog of all the stars
 
-	subprocess.call('sex -c Pipe_sexfile_CMD.sex '+science_image[0]+science_image[1]+'.fits -PARAMETERS_NAME PTF_Transform_Param.param -FILTER_NAME default.conv -CATALOG_NAME Results_V'+str(vnum)+'/Catalog/'+science_image[1]+'_Catalog_V'+str(vnum)+'.cat -WEIGHT_IMAGE '+science_image[0]+science_image[1]+'.weight.fits -MAG_ZEROPOINT'+'	'+str(zeropoint)+' -SEEING_FWHM '+str(seeing)+' -SATUR_LEVEL '+str(saturation)+' -GAIN '+str(gain)+' -PHOT_FLUXFRAC 0.2,0.5,0.9 -VERBOSE_TYPE QUIET',shell=True)
+	subprocess.call('sex -c Pipe_sexfile_Peter.sex '+science_image[0]+science_image[1]+'.fits -PARAMETERS_NAME PTF_Transform_Param.param -FILTER_NAME default.conv -CATALOG_NAME Results_V'+str(vnum)+'/Catalog/'+science_image[1]+'_Catalog_V'+str(vnum)+'.cat -WEIGHT_IMAGE '+science_image[0]+science_image[1]+'.weight.fits -MAG_ZEROPOINT'+'	'+str(zeropoint)+' -SEEING_FWHM '+str(seeing)+' -SATUR_LEVEL '+str(saturation)+' -GAIN '+str(gain)+' -PHOT_FLUXFRAC 0.2,0.5,0.9 -VERBOSE_TYPE QUIET',shell=True)
 
 def Enough_Objects(science_image): #Checks that sextractor has found at least 200 objects
 	enough=True
@@ -214,7 +214,7 @@ def Scaling(science_image ,xcord, ycord, mag_array, flux_array, background_array
 	delta_array=[]
 	#print 'faint_fake', faint_fake
 	for i in range(0,fake_stars):
-		ran_mag=random.uniform(faint_fake, 22.5) #The fake stars will be in this range of magnitudes
+		ran_mag=18. #The fake stars will be in this range of magnitudes
 		ran_flux=10.0**((ran_mag-zpt)/(-2.5))
 		ranmagarray.append(ran_mag)
 		star=int(random.uniform(0,len(xcord)-1))
@@ -647,5 +647,5 @@ def Run_All(masterlist):
 		Execute(run)
 	'''
 	print 'V'+str(vnum)+' took: ', time.time()-t0, 'seconds'
-Run_All('Master.list')
+Run_All('Test_List.txt')
 #Run_All('Nersc_test_List.txt')

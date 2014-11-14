@@ -214,7 +214,7 @@ def Scaling(science_image ,xcord, ycord, mag_array, flux_array, background_array
 	delta_array=[]
 	#print 'faint_fake', faint_fake
 	for i in range(0,fake_stars):
-		ran_mag=18. #The fake stars will be in this range of magnitudes
+		ran_mag=random.uniform(faint_fake, 22.5) #The fake stars will be in this range of magnitudes
 		ran_flux=10.0**((ran_mag-zpt)/(-2.5))
 		ranmagarray.append(ran_mag)
 		star=int(random.uniform(0,len(xcord)-1))
@@ -647,5 +647,5 @@ def Run_All(masterlist):
 		Execute(run)
 	'''
 	print 'V'+str(vnum)+' took: ', time.time()-t0, 'seconds'
-Run_All('Test_List.txt')
+Run_All('Master.List')
 #Run_All('Nersc_test_List.txt')

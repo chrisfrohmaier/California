@@ -118,7 +118,17 @@ The slight offset from 0 difference in the magnitudes is because the zeropoint u
 
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/Solution.png)
 
+##Systematic Correction
 
+The right hand panel of the below figure shows the MagDiff/mag_error Vs input magnitude. Scaling by the mag error shows us that we have a systematic in how we measure the magnitude of the fake.
+
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/Correct_Mag_diff.png)
+
+We add in quadrature 0.02 to the magnitude error. 0.02 is a guess of how well we can measure the magnitude of a source. Again, looking at the right hand panel (below) we see that this systematic is now brought under control.
+
+We should not be overly concerned by this systematic though because our bin size will be larger than this and so we'll just slosh around in a bin.
+
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/Correct_Mag_diff_002.png)
 
 #Database 
 Our fake star catalog and candidates need to be matched.

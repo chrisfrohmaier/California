@@ -1,9 +1,9 @@
-#2014_07_09
+#2014_11_14
 
 #Before you run this make sure you have the input images (both science and mask) in this directory along with the following files:
 #default.conv
 #default.nnw
-#Pipe_sexfile_CMD.sex
+#Pipe_sexfile_Peter.sex
 #PTF_Transform_Param.param
 
 #!!!!!!!!!!!!!!!!IMPORTANT!!!!!!!!!!!!!--- YOU NEED THE MODULES BELOW

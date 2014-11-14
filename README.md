@@ -133,14 +133,15 @@ We should not be overly concerned by this systematic though because our bin size
 #Database 
 
 ##Loading the database
-unload all the python modules and set your python path to:
+You have to use the Anaconda python:
 
 `/project/projectdirs/deepsky/rates/python/anaconda/bin`
 
-run the `chrisml.py` script in the utils directory. as follows
+Run the `chrisml.py` script in the utils directory as follows (change as needed):
 
 ```
-/project/projectdirs/deepsky/rates/effs/utils/chrisml.py -c /path/to/sub.file.cand.load -s /path/to/sub.file.sub.load
+/project/projectdirs/deepsky/rates/python/anaconda/bin/python /project/projectdirs/deepsky/rates/effs/utils/chrisml.py -c /project/projectdirs/deepsky/rates/effs/Chris_Dev/First_10/subs/2009_06/C00/V1/sub.PTF201005024182_2_o_12465_00.w_fakesV1_cd.ptf_100019_00_R_v2.cand.load -s /project/projectdirs/deepsky/rates/effs/Chris_Dev/First_10/subs/2009_06/C00/V1/sub.PTF201005024182_2_o_12465_00.w_fakesV1_cd.ptf_100019_00_R_v2.sub.load
+Successfully ran ML and loaded DB for sub /project/projectdirs/deepsky/rates/effs/Chris_Dev/First_10/subs/2009_06/C00/V1/sub.PTF201005024182_2_o_12465_00.w_fakesV1_cd.ptf_100019_00_R_v2.sub.load
 ```
 This will take a while. Run it on nersc?
 

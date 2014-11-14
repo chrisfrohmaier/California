@@ -102,9 +102,10 @@ We set all our fakes to be generated at 18mag and played around with how we sele
 
 ##The Solution!!
 
-The solution came when comparing how I use SExtractor with how Peter uses SExtractor. It was suspected that the why we derived `MAG_AUTO` differed.
+The solution came when comparing how I use SExtractor with how Peter uses SExtractor. It was suspected that the way we derived `MAG_AUTO` differed.
 
 We compared our SExtractor files and noticed that I use the parameter:
+
 `PHOT_AUTOPARAMS  1.0, 1.0`
 
 whereas Peter uses

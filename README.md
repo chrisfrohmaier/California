@@ -20,10 +20,15 @@ The `new_fakes`need to be moved to a more suitable directory structure as the su
 New directories should be made based on `Year_Month/Chip/Version`
 E.g.
 `PTF201104282826_2_o_45509_09.w_fakesV6.fits`
+
 Characters: 
+
 4-7 = Year - `2011`
+
 8-9 = Month - `04`
+
 the number between `_` and '.' = Chip C`09` 
+
 Version `V6`
 
 This is the directory structure of for the subtractions. (Start /project/projectdirs/deepsky/rates/effs/)
@@ -50,7 +55,7 @@ Run the `filter_select.py` script to query the database to find which reference 
 
 `filter_select.py` also creates a text file where each line is a command will execute the `diffem` command.
 
-*Don't forget to run `mkweight`*, its also in the utils directory.
+_Don't forget to run `mkweight`_, it's also in the utils directory.
 
 The `diffem` script should be run on NERSC using the `runit` script (modify for your needs).
 
@@ -78,7 +83,7 @@ We only looked at the data from the same night, on the same chip but across all 
 We also looked at this trend for the hostless fakes. We suffered from poor statistics because only 10% of fakes are hostless. Again, there is scatter.
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Magdiff_Graphs/2011_06_C02_Hostless.png)
 
-###Possible Solution
+###Possible Solution (Edited: Real Solution shown later)
 The magnitudes for the subtraction are calculated from the zeropoint of the reference. However, I did not know these zeropoints when i was calculating the fake magnitudes. Therefore my magnitudes need to be corrected. An extra column will be added to the database with the corrected fake magnitudes. These changes won't be huge and we will still have enough object in the magnitude bins.
 
 ####Zeropoint Explanation
@@ -87,6 +92,31 @@ The `new` has a zeropoint
 These zeropoints differ by a factor (given in the subtraction table/database)
 The zeropoints for the subtraction are resolved with this correction factor as follows:
 ![Equation](https://dl.dropboxusercontent.com/u/37570643/zp_factor.png)
+
+###Testing the sources
+
+We set all our fakes to be generated at 18mag and played around with how we selected our source stars. We also placed these sources in blank regions of the sky.
+
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/All_V.png)
+>Regardless of our sources we always saw an offset and an undesirably broad distribution
+
+##The Solution!!
+
+The solution came when comparing how I use SExtractor with how Peter uses SExtractor. It was suspected that the why we derived `MAG_AUTO` differed.
+
+We compared our SExtractor files and noticed that I use the parameter:
+`PHOT_AUTOPARAMS  1.0, 1.0`
+
+whereas Peter uses
+
+`PHOT_AUTOPARAMS  2.5, 3.5`
+
+This parameter affects the Gaussian that collects our flux. My settings were forcing a perfect Gaussian, whereas Peter allowed for some flexibility. This allows the aperture to encompass the object we can be sure we are including all the flux, therefore when we scale this flux we are scaling to a `MAG_AUTO` consistent in the `new` and `sub` images.
+
+The slight offset from 0 difference in the magnitudes is because the zeropoint used in the `new` and `sub` is slightly difference, but this offset corresponds exactly with the difference.
+
+![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/Solution.png)
+
 
 
 #Database 

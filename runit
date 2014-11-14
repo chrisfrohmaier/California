@@ -1,0 +1,25 @@
+#!/usr/bin/ksh
+#PBS -S /bin/bash
+#PBS -N date
+#PBS -j oe 
+#PBS -l nodes=1:ppn=1,walltime=00:30:00
+#PBS -q serial
+#PBS -A m937
+
+ulimit -Sv unlimited
+
+cd /project/projectdirs/deepsky/rates/effs/subs/date
+ 
+for chip in C?? 
+do
+
+  cd ${chip}/V10
+
+  while read line
+  do
+     $line
+  done < sub_list.dat
+
+  cd ../..
+done
+

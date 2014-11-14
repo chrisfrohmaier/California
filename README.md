@@ -51,11 +51,11 @@ Refs are found here
 >`/project/projectdirs/deepsky/rates/effs/refs/Rband/ptf_100019/C??`
 
 
-Run the `filter_select.py` script to query the database to find which reference image to use. (This takes a while, use NIM so you can take you laptop home!)
+Run the `filter_select.py` script to query the database to find which reference image to use. (This takes a while, use NIM so you can take your laptop home!)
 
-`filter_select.py` also creates a text file where each line is a command will execute the `diffem` command.
+`filter_select.py` also creates a text file where each line is a command which will execute the `diffem` command.
 
-_Don't forget to run `mkweight`_, it's also in the utils directory.
+**Don't forget to run `mkweight`**, it's also in the utils directory.
 
 The `diffem` script should be run on NERSC using the `runit` script (modify for your needs).
 
@@ -71,7 +71,7 @@ The `diffem` script should be run on NERSC using the `runit` script (modify for 
 #Match Analysis
 We matched the subtraction candidates and the fakes. We found that all the candidates fell within 1" of the position the fake was inserted at (when scaled by the seeing).
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/Both_Separation_Histogram.jpg)
->Left: Distribution of the candidate/fake separation. Right: The Magnitude difference between the fake and matching candidate against the fake's magnitude. Note the offset anf the scatter.
+>Left: Distribution of the candidate/fake separation. Right: The Magnitude difference between the fake and matching candidate against the fake's magnitude. **Note** the offset and the scatter.
 
 ##Problem with the Magnitude Differences
 From the right panel of the above figure it is clear there is a constant offset and a large random scatter in the magnitude difference. The expected behaviour would be for a small scatter around y=0 for the brighter object with an increasing scatter as we go to fainter magnitudes.

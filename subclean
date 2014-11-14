@@ -1,0 +1,36 @@
+ for chip in C??
+ do
+
+  cd $chip
+
+  for ver in V? V??
+  do
+
+    cd $ver
+
+    echo 'Working on' $chip $ver
+
+    for file in PTF*.w_fakes${ver}.fits 
+    do
+
+      base=${file%.fits} 
+
+      rm ${base}.cat ${base}.head ${base}.noise.fits
+      rm hot.${base}*.par hot.${base}*.log ${base}.done
+      rm ref.${base}*.remap.ap.cat
+      rm ref.${base}*.remap.head ref.${base}*.remap.mask.fits 
+      rm ref.${base}*.remap.noise.fits ref.${base}*.remap.weight.fits
+      rm sub.${base}*.bpix  sub.${base}*.list 
+      rm sub.${base}*.mask.fits sub.${base}*.cat
+   
+    done
+
+    rm swarp.xml scamp.xml scamp_1.cat
+
+    cd ../
+
+   done
+
+  cd ../
+
+done

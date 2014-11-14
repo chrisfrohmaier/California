@@ -131,6 +131,20 @@ We should not be overly concerned by this systematic though because our bin size
 ![ScreenShot](https://dl.dropboxusercontent.com/u/37570643/PhD/Correct_Mag_diff_002.png)
 
 #Database 
+
+##Loading the database
+unload all the python modules and set your python path to:
+
+`/project/projectdirs/deepsky/rates/python/anaconda/bin`
+
+run the `chrisml.py` script in the utils directory. as follows
+
+```
+/project/projectdirs/deepsky/rates/effs/utils/chrisml.py -c /path/to/sub.file.cand.load -s /path/to/sub.file.sub.load
+```
+This will take a while. Run it on nersc?
+
+##Matching to my Fake Catalogs
 Our fake star catalog and candidates need to be matched.
 In the directory:
 ```

@@ -621,7 +621,7 @@ def Run_All(masterlist):
 	for line in k:
 		koo=line.strip('.fits\n')
 		kn=koo.split(' ')
-		science_fits.append([kn[0]+str('/'),kn[1]])
+		science_fits.append([kn[0]+str('/orig/'),kn[1]])
 
 	#print 'Science_Fits', science_fits
 	bad_images=open('Results_V'+str(vnum)+'/Bad_Images_V'+str(vnum)+'.dat','a')

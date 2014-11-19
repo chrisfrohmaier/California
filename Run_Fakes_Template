@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -S /bin/bash
+#PBS -N Fakes_Insert1 
+#PBS -j oe 
+#PBS -l nodes=1:ppn=8,walltime=03:0:00
+#PBS -q regular
+#PBS -A m937
+
+
+cd /project/projectdirs/deepsky/rates/effs/Chris_Dev
+
+#uncomment modules below to run on Carver
+module load python
+module load numpy
+
+python Fakes_Insert0.py 0

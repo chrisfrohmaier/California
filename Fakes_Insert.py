@@ -45,11 +45,11 @@ def Sextract(science_image,zeropoint,seeing,saturation,gain): #Runs Sextractor a
 
 	subprocess.call('sex -c Pipe_sexfile_Peter.sex '+science_image[0]+science_image[1]+'.fits -PARAMETERS_NAME PTF_Transform_Param.param -FILTER_NAME default.conv -CATALOG_NAME Results_V'+str(vnum)+'/Catalog/'+science_image[1]+'_Catalog_V'+str(vnum)+'.cat -WEIGHT_IMAGE '+science_image[0]+science_image[1]+'.weight.fits -MAG_ZEROPOINT'+'	'+str(zeropoint)+' -SEEING_FWHM '+str(seeing)+' -SATUR_LEVEL '+str(saturation)+' -GAIN '+str(gain)+' -PHOT_FLUXFRAC 0.2,0.5,0.9 -VERBOSE_TYPE QUIET',shell=True)
 
-def Enough_Objects(science_image): #Checks that sextractor has found at least 200 objects
+def Enough_Objects(science_image): #Checks that sextractor has found a suitable number of objects
 	enough=True
 	test=os.popen('wc -l Results_V'+str(vnum)+'/Catalog/'+science_image[1]+'_Catalog_V'+str(vnum)+'.cat').read()
 	rows=test.split()
-	if float(rows[0])<217: #217 because the catalog have commented lines which are counted
+	if float(rows[0])<300: 
 			return False
 
 def Selecting_Bright(science_image): #Selected the top 20 brightest stars in the catalog
@@ -484,7 +484,7 @@ def add_fakes_2galaxy(science_image,boxsize, xcord_star, ycord_star, newx_star, 
 	hdulist.close()
 	'''
 def Execute(run):
-	#print '!!!!!!', run
+	#print 'Doing:', run
 	christ=open('Results_V'+str(vnum)+'/Images_Doing'+str(vnum)+'.dat','a')
 	science_image=run
 
@@ -511,10 +511,20 @@ def Execute(run):
 		bad_images.write(str(science_image[0])+str(science_image[1])+str('.fits')+' '+str('Reason: Astropy Could not Open the .fits file')+'\n')
 		bad_images.close()
 		#print 'Cant open Science'
-
-
-
 		return
+
+	try:
+		hdulist_weight=fits.open(science_image[0]+science_image[1]+'.weight.fits')
+
+		#print '++++ multi_mask assign ', science_image
+
+	except IOError or Warning or UnboundLocalError:
+		bad_images=open('Results_V'+str(vnum)+'/Bad_Images_V'+str(vnum)+'.dat','a')
+		bad_images.write(str(science_image[0])+str(science_image[1])+str('.fits')+' '+str('Reason: Astropy Could not Open the weight file')+'\n')
+		bad_images.close()
+		#print 'Cant open Science'
+		return
+
 	christ.write(str(science_image[0]+science_image[1])+'.fits'+'\n')
 	hdulist_multi_sci.verify('fix')
 	zeropoint=float(hdulist_multi_sci[0].header['UB1_ZP'])
@@ -556,7 +566,7 @@ def Execute(run):
 	if catsize==False:
 			#print science_image, 'didn\'t have enough objects detected so it was moved to Results_V'+str(vnum)+'/Bad_Images/ and the newly created weight map, sex file and catalog have been deleted'
 			bad_images=open('Results_V'+str(vnum)+'/Bad_Images_V'+str(vnum)+'.dat','a')
-			bad_images.write(str(science_image[0])+str(science_image[1])+str('.fits')+' '+str('Reason: Sextractor did not detect enough objects (<200)')+'\n')
+			bad_images.write(str(science_image[0])+str(science_image[1])+str('.fits')+' '+str('Reason: Sextractor did not detect enough objects (<300)')+'\n')
 			os.remove('Results_V'+str(vnum)+'/Catalog/'+science_image[1]+'_Catalog_V'+str(vnum)+'.cat')
 			return
 
@@ -585,6 +595,7 @@ def Execute(run):
 	christ.write(str('All Good: ')+str(science_image[1])+'\n')
 	christ.close()
 	#Sub_ML_DB(science_image)
+	#print 'Done:', run
 #-----------------------------------RUN PIPELINE------------------------------------------
 
 def Run_All(masterlist):
@@ -621,7 +632,7 @@ def Run_All(masterlist):
 	for line in k:
 		koo=line.strip('.fits\n')
 		kn=koo.split(' ')
-		science_fits.append([kn[0]+str('/orig/'),kn[1]])
+		science_fits.append([kn[0]+str('/'),kn[1]])
 
 	#print 'Science_Fits', science_fits
 	bad_images=open('Results_V'+str(vnum)+'/Bad_Images_V'+str(vnum)+'.dat','a')
@@ -647,5 +658,5 @@ def Run_All(masterlist):
 		Execute(run)
 	'''
 	print 'V'+str(vnum)+' took: ', time.time()-t0, 'seconds'
-Run_All('Master.List')
+Run_All('Master.list')
 #Run_All('Nersc_test_List.txt')
